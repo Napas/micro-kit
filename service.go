@@ -55,7 +55,7 @@ func (s *Service) getLogLevel() log.Level {
 	return lvl
 }
 
-func (s *Service) GetAwsSession(logger *log.Logger) (*session.Session, error) {
+func (s *Service) GetAwsSession() (*session.Session, error) {
 	if s.awsSession == nil {
 		awsSession, err := session.NewSession(&aws.Config{
 			Region: aws.String(

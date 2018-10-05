@@ -106,7 +106,7 @@ func (s *Service) WrapWithJwtTokenValidation(endpoint endpoint.Endpoint) endpoin
 
 func (s *Service) getResponseEncoder() *ResponseEncoder {
 	if s.responseEncoder == nil {
-		s.responseEncoder = &ResponseEncoder{}
+		s.responseEncoder = &ResponseEncoder{s.GetLogger()}
 	}
 
 	return s.responseEncoder

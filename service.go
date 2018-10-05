@@ -18,7 +18,7 @@ import (
 
 type Service struct {
 	logsFormatter   logrus.Formatter
-	logger          *logrus.FieldLogger
+	logger          logrus.FieldLogger
 	awsSession      *session.Session
 	validateKey     *rsa.PublicKey
 	jwtMiddleware   endpoint.Middleware
@@ -27,7 +27,7 @@ type Service struct {
 	router          *mux.Router
 }
 
-func (s *Service) GetLogger() *logrus.FieldLogger {
+func (s *Service) GetLogger() logrus.FieldLogger {
 	if s.logger == nil {
 		logger := logrus.New()
 		logger.SetLevel(s.getLogLevel())

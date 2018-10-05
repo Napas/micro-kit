@@ -89,7 +89,7 @@ func (s *Service) GetValidateKey() (*rsa.PublicKey, error) {
 func (s *Service) getJwtMiddleware() endpoint.Middleware {
 	if s.jwtMiddleware == nil {
 		s.jwtMiddleware = jwtAuth.NewParser(
-			func(token *jwt.Token) (interface{}, error) { return s.GetValidateKey(), nil },
+			func(token *jwt.Token) (interface{}, error) { return s.GetValidateKey() },
 			jwt.SigningMethodRS512,
 			func() jwt.Claims { return &JwtClaims{} },
 		)

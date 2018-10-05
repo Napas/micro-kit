@@ -1,0 +1,19 @@
+package: micro-kit
+import:
+- package: github.com/go-kit/kit
+  version: ^0.7.0
+  subpackages:
+  - transport/http
+- package: github.com/sirupsen/logrus
+  version: ^1.1.0
+- package: github.com/go-playground/validator
+  version: ^9.21.0
+- package: github.com/dgrijalva/jwt-go
+  version: ^3.2.0
+- package: github.com/aws/aws-sdk-go
+  version: ^1.15.44
+  subpackages:
+  - aws/session
+- package: github.com/gorilla/mux
+  version: ^1.6.2
+- package: github.com/pytimer/mux-logrus

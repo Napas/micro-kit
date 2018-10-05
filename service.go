@@ -148,6 +148,13 @@ func (s *Service) CreateHttpHandler(
 func (s *Service) GetRouter() *mux.Router {
 	if s.router == nil {
 		s.router = mux.NewRouter()
+
+		// add a ping endpoint by default
+		s.router.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(200)
+			w.Header().Add("Content-Type", "application/json")
+			w.Write([]byte("{\"payload\":\"pong\"}"))
+		})
 	}
 
 	return s.router

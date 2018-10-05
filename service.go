@@ -99,7 +99,7 @@ func (s *Service) getJwtMiddleware() endpoint.Middleware {
 }
 
 func (s *Service) WrapWithJwtTokenValidation(endpoint endpoint.Endpoint) endpoint.Endpoint {
-	return s.jwtMiddleware(endpoint)
+	return s.getJwtMiddleware()(endpoint)
 }
 
 func (s *Service) getResponseEncoder() *ResponseEncoder {

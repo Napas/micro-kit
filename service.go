@@ -10,15 +10,15 @@ import (
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"strings"
 )
 
 type Service struct {
-	logsFormatter   log.Formatter
-	logger          *log.FieldLogger
+	logsFormatter   logrus.Formatter
+	logger          *logrus.FieldLogger
 	awsSession      *session.Session
 	validateKey     *rsa.PublicKey
 	jwtMiddleware   endpoint.Middleware
@@ -27,9 +27,9 @@ type Service struct {
 	router          *mux.Router
 }
 
-func (s *Service) GetLogger() *log.FieldLogger {
+func (s *Service) GetLogger() *logrus.FieldLogger {
 	if s.logger == nil {
-		logger := log.New()
+		logger := logrus.New()
 		logger.SetLevel(s.getLogLevel())
 		logger.Formatter = s.GetLogsFormatter()
 	}
@@ -37,19 +37,19 @@ func (s *Service) GetLogger() *log.FieldLogger {
 	return s.logger
 }
 
-func (s *Service) GetLogsFormatter() log.Formatter {
+func (s *Service) GetLogsFormatter() logrus.Formatter {
 	if s.logsFormatter == nil {
-		s.logsFormatter = &log.JSONFormatter{}
+		s.logsFormatter = &logrus.JSONFormatter{}
 	}
 
 	return s.logsFormatter
 }
 
-func (s *Service) getLogLevel() log.Level {
-	lvl, err := log.ParseLevel(os.Getenv("LOG_LEVEL"))
+func (s *Service) getLogLevel() logrus.Level {
+	lvl, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
 
 	if err != nil {
-		return log.DebugLevel
+		return logrus.DebugLevel
 	}
 
 	return lvl

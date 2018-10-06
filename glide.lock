@@ -1,8 +1,8 @@
-hash: 25ac76c5744c51a7f26f11db0154dd5a796ed7a68c964edd88fa37ea3373cb29
-updated: 2018-09-27T23:12:58.5805972+01:00
+hash: ae9f4ae82cb023a5e88dd12bff00374c2630e3bf769aebce6c13431f5c78c430
+updated: 2018-10-06T09:41:43.3996637+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: a5158a897b80d434ed8704bb42fed46ff9bf8b91
+  version: 59124d90523f4c0491f997f9a36aef265fe3502c
   subpackages:
   - aws
   - aws/awserr
@@ -21,15 +21,22 @@ imports:
   - aws/request
   - aws/session
   - aws/signer/v4
+  - internal/s3err
   - internal/sdkio
   - internal/sdkrand
   - internal/sdkuri
   - internal/shareddefaults
   - private/protocol
+  - private/protocol/eventstream
+  - private/protocol/eventstream/eventstreamapi
   - private/protocol/query
   - private/protocol/query/queryutil
   - private/protocol/rest
+  - private/protocol/restxml
   - private/protocol/xml/xmlutil
+  - service/s3
+  - service/s3/s3iface
+  - service/s3/s3manager
   - service/sts
 - name: github.com/dgrijalva/jwt-go
   version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
@@ -70,7 +77,7 @@ imports:
 - name: github.com/jmespath/go-jmespath
   version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
 - name: github.com/konsorten/go-windows-terminal-sequences
-  version: b729f2633dfe35f4d1d8a32385f6685610ce1cb5
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/kr/logfmt
   version: b84e30acd515aadc4b783ad4ff83aff3299bdfe0
 - name: github.com/pytimer/mux-logrus

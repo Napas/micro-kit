@@ -5,6 +5,8 @@ import (
 	"crypto/rsa"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/dgrijalva/jwt-go"
 	jwtAuth "github.com/go-kit/kit/auth/jwt"
 	"github.com/go-kit/kit/endpoint"
@@ -76,7 +78,22 @@ func (s *Service) GetAwsSession() (*session.Session, error) {
 
 func (s *Service) GetValidateKey() (*rsa.PublicKey, error) {
 	if s.validateKey == nil {
-		validateKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(os.Getenv("ID_RSA_PUB")))
+		buf := []byte{}
+		stream := aws.NewWriteAtBuffer(buf)
+		sess, err := s.GetAwsSession()
+
+		if err != nil {
+			return nil, err
+		}
+
+		downloader := s3manager.NewDownloader(sess)
+		_, err = downloader.Download(
+			stream, &s3.GetObjectInput{
+				Bucket: aws.String(os.Getenv("ID_RSA_PUB_BUCKET")),
+				Key:    aws.String(os.Getenv("ID_RSA_PUB_FILE")),
+			})
+
+		validateKey, err := jwt.ParseRSAPublicKeyFromPEM(stream.Bytes())
 
 		if err != nil {
 			return nil, err

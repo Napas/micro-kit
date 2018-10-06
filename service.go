@@ -61,11 +61,18 @@ func (s *Service) getLogLevel() logrus.Level {
 
 func (s *Service) GetAwsSession() (*session.Session, error) {
 	if s.awsSession == nil {
-		awsSession, err := session.NewSession(&aws.Config{
+		config := &aws.Config{
 			Region: aws.String(
 				os.Getenv("AWS_REGION"),
 			),
-		})
+		}
+
+		if s.getLogLevel() == logrus.DebugLevel {
+			config.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
+			config.CredentialsChainVerboseErrors = aws.Bool(true)
+		}
+
+		awsSession, err := session.NewSession(config)
 
 		if err != nil {
 			return nil, err

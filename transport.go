@@ -41,10 +41,9 @@ func (e *ResponseEncoder) EncodeError(ctx context.Context, err error, w http.Res
 	} else {
 		e.logger.
 			WithError(err).
-			Info("Encoding error.")
+			Infof("Encoding error: %s", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	var serviceErr *ServiceError
 
 	if castedErr, ok := err.(*ServiceError); ok {

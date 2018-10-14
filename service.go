@@ -34,6 +34,7 @@ func (s *Service) GetLogger() logrus.FieldLogger {
 		logger := logrus.New()
 		logger.SetLevel(s.getLogLevel())
 		logger.Formatter = s.GetLogsFormatter()
+		logger.Hooks.Add(&ContextHook{})
 
 		s.logger = logger
 	}
@@ -90,6 +91,7 @@ func (s *Service) GetValidateKey() (*rsa.PublicKey, error) {
 		sess, err := s.GetAwsSession()
 
 		if err != nil {
+			s.logger.WithError(err).Errorf("Failed to download public key with error: ")
 			return nil, err
 		}
 

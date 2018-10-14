@@ -52,14 +52,16 @@ func (e *ResponseEncoder) EncodeError(ctx context.Context, err error, w http.Res
 		serviceErr = NewValidationError(validationErrors)
 	} else if jwtError, ok := err.(*jwtGo.ValidationError); ok {
 		serviceErr = e.HandleJwtError(jwtError, serviceErr)
+	} else if err.Error() == "JWT Token is expired" {
+		serviceErr = NewServiceError(http.StatusForbidden, err.Error(), err)
 	} else {
-		serviceErr = NewServiceError(500, "Something went wrong.", err)
+		serviceErr = NewServiceError(http.StatusInternalServerError, "Something went wrong.", err)
 	}
 
 	if serviceErr.Code != 0 {
 		w.WriteHeader(serviceErr.Code)
 	} else {
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
 	encoderErr := json.NewEncoder(w).Encode(ErrorResponse{serviceErr})
@@ -74,17 +76,17 @@ func (e *ResponseEncoder) EncodeError(ctx context.Context, err error, w http.Res
 func (e *ResponseEncoder) HandleJwtError(jwtError *jwtGo.ValidationError, serviceErr *ServiceError) *ServiceError {
 	switch {
 	case jwtError.Errors&jwtGo.ValidationErrorMalformed != 0:
-		serviceErr = NewServiceError(400, "Malformed JWT token.", jwtError)
+		serviceErr = NewServiceError(http.StatusBadRequest, "Malformed JWT token.", jwtError)
 		break
 	case jwtError.Errors&jwtGo.ValidationErrorExpired != 0:
 	case jwtError.Errors&jwtGo.ValidationErrorNotValidYet != 0:
-		serviceErr = NewServiceError(403, "Invalid JWT token", jwtError)
+		serviceErr = NewServiceError(http.StatusForbidden, "Invalid JWT token", jwtError)
 		break
 	case jwtError.Inner != nil:
-		serviceErr = NewServiceError(500, "Something when wrong.", jwtError.Inner)
+		serviceErr = NewServiceError(http.StatusInternalServerError, "Something when wrong.", jwtError.Inner)
 		break
 	default:
-		serviceErr = NewServiceError(500, "Something when wrong.", jwtError)
+		serviceErr = NewServiceError(http.StatusInternalServerError, "Something when wrong.", jwtError)
 		break
 	}
 	return serviceErr

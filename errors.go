@@ -3,6 +3,7 @@ package micro_kit
 import (
 	"fmt"
 	"github.com/go-playground/validator"
+	"net/http"
 	"strings"
 )
 
@@ -28,7 +29,7 @@ func NewServiceError(code int, message string, previous error) *ServiceError {
 }
 
 func NewValidationError(validationErrors validator.ValidationErrors) *ServiceError {
-	err := NewServiceError(405, "Bad request.", validationErrors)
+	err := NewServiceError(http.StatusBadRequest, "Bad request.", validationErrors)
 
 	for _, fieldError := range validationErrors {
 		err.ValidationErrors[fieldError.StructField()] = fieldError.Tag()

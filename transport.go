@@ -20,6 +20,16 @@ type JwtClaims struct {
 	*jwtGo.StandardClaims
 }
 
+func (claims *JwtClaims) HasRole(role string) bool {
+	for _, existingRole := range claims.Roles {
+		if existingRole == role {
+			return true
+		}
+	}
+
+	return false
+}
+
 type ResponseEncoder struct {
 	logger logrus.FieldLogger
 }

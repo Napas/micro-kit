@@ -18,15 +18,19 @@ import (
 	"strings"
 )
 
+const AuthContextKey = "AuthContext"
+
 type Service struct {
 	logsFormatter   logrus.Formatter
 	logger          logrus.FieldLogger
 	awsSession      *session.Session
 	validateKey     *rsa.PublicKey
 	jwtMiddleware   endpoint.Middleware
+	authMiddleware  endpoint.Middleware
 	serverOptions   []httptransport.ServerOption
 	responseEncoder *ResponseEncoder
 	router          *mux.Router
+	rolesMap        HavingRole
 }
 
 func (s *Service) GetLogger() logrus.FieldLogger {
@@ -127,7 +131,9 @@ func (s *Service) getJwtMiddleware() endpoint.Middleware {
 }
 
 func (s *Service) WrapWithJwtTokenValidation(endpoint endpoint.Endpoint) endpoint.Endpoint {
-	return s.getJwtMiddleware()(endpoint)
+	return s.getJwtMiddleware()(
+		s.getAuthMiddleware()(endpoint),
+	)
 }
 
 func (s *Service) getResponseEncoder() *ResponseEncoder {
@@ -192,4 +198,32 @@ func (s *Service) GetRouter() *mux.Router {
 	}
 
 	return s.router
+}
+
+func (s *Service) getAuthMiddleware() endpoint.Middleware {
+	if s.authMiddleware == nil {
+		s.authMiddleware = func(next endpoint.Endpoint) endpoint.Endpoint {
+			return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+				claims, ok := ctx.Value(jwtAuth.JWTClaimsContextKey).(*JwtClaims)
+
+				if !ok || claims == nil {
+					claims = &JwtClaims{Roles: []string{ROLE_ANONYMOUS}}
+				}
+
+				auth := &Auth{claims, s.getRolesMap()}
+
+				return next(context.WithValue(ctx, AuthContextKey, auth), request)
+			}
+		}
+	}
+
+	return s.authMiddleware
+}
+
+func (s *Service) getRolesMap() HavingRole {
+	if s.rolesMap == nil {
+		s.rolesMap = DefaultRolesMap()
+	}
+
+	return s.rolesMap
 }

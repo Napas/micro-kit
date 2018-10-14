@@ -14,22 +14,6 @@ const (
 	bearerFormat string = "Bearer %s"
 )
 
-type JwtClaims struct {
-	UserId string   `json:"userId"`
-	Roles  []string `json:"roles"`
-	*jwtGo.StandardClaims
-}
-
-func (claims *JwtClaims) HasRole(role string) bool {
-	for _, existingRole := range claims.Roles {
-		if existingRole == role {
-			return true
-		}
-	}
-
-	return false
-}
-
 type ResponseEncoder struct {
 	logger logrus.FieldLogger
 }

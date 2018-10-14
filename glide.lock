@@ -1,8 +1,8 @@
-hash: ae9f4ae82cb023a5e88dd12bff00374c2630e3bf769aebce6c13431f5c78c430
-updated: 2018-10-06T09:41:43.3996637+01:00
+hash: d827b786d463043e5ba641e597e68c1fd901a4f691e5b38575b2ce963389c911
+updated: 2018-10-14T17:58:40.8126671+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 59124d90523f4c0491f997f9a36aef265fe3502c
+  version: bf8067ceb6e7f51e150c218972dccfeeed892b85
   subpackages:
   - aws
   - aws/awserr
@@ -83,7 +83,9 @@ imports:
 - name: github.com/pytimer/mux-logrus
   version: cf75012ca41b36a52c9df40ed236cdb87e3178cf
 - name: github.com/sirupsen/logrus
-  version: a67f783a3814b8729bd2dac5780b5f78f8dbd64d
+  version: ad15b42461921f1fb3529b058c6786c6a45d5162
+- name: github.com/stretchr/testify
+  version: f35b8ab0b5a2cef36673838d662e249dd9c94686
 - name: golang.org/x/crypto
   version: 650f4a345ab4e5b245a3034b110ebc7299e68186
   subpackages:

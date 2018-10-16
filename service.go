@@ -38,7 +38,6 @@ func (s *Service) GetLogger() logrus.FieldLogger {
 		logger := logrus.New()
 		logger.SetLevel(s.getLogLevel())
 		logger.Formatter = s.GetLogsFormatter()
-		logger.Hooks.Add(&ContextHook{})
 
 		s.logger = logger
 	}

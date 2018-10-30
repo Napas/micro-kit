@@ -86,9 +86,9 @@ func (auth *Auth) HasRole(role string) bool {
 	}
 
 	for _, roleFromToken := range auth.Claims.Roles {
-		role := auth.RolesMap.GetRole(roleFromToken)
+		roleObj := auth.RolesMap.GetRole(roleFromToken)
 
-		if role != nil && role.HasRole(roleFromToken) {
+		if roleObj != nil && roleObj.HasRole(role) {
 			return true
 		}
 	}

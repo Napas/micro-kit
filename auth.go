@@ -34,6 +34,11 @@ func (r *Role) HasRole(role string) bool {
 	return false
 }
 
+type HavingRoles interface {
+	HasRole(string) bool
+	GetRole(string) HavingRole
+}
+
 type RolesMap struct {
 	Roles map[string]HavingRole
 }
@@ -72,7 +77,7 @@ func DefaultRolesMap() *RolesMap {
 
 type Auth struct {
 	Claims   *JwtClaims
-	RolesMap HavingRole
+	RolesMap HavingRoles
 }
 
 func (auth *Auth) HasRole(role string) bool {
@@ -81,7 +86,9 @@ func (auth *Auth) HasRole(role string) bool {
 	}
 
 	for _, roleFromToken := range auth.Claims.Roles {
-		if auth.RolesMap.HasRole(roleFromToken) {
+		role := auth.RolesMap.GetRole(roleFromToken)
+
+		if role != nil && role.HasRole(roleFromToken) {
 			return true
 		}
 	}

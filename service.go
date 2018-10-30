@@ -30,7 +30,7 @@ type Service struct {
 	serverOptions   []httptransport.ServerOption
 	responseEncoder *ResponseEncoder
 	router          *mux.Router
-	rolesMap        HavingRole
+	rolesMap        HavingRoles
 }
 
 func (s *Service) GetLogger() logrus.FieldLogger {
@@ -219,7 +219,7 @@ func (s *Service) getAuthMiddleware() endpoint.Middleware {
 	return s.authMiddleware
 }
 
-func (s *Service) getRolesMap() HavingRole {
+func (s *Service) getRolesMap() HavingRoles {
 	if s.rolesMap == nil {
 		s.rolesMap = DefaultRolesMap()
 	}

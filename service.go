@@ -219,6 +219,24 @@ func (s *Service) getAuthMiddleware() endpoint.Middleware {
 	return s.authMiddleware
 }
 
+func (s *Service) RequireUserRoleMiddleware(role string) endpoint.Middleware {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (interface{}, error) {
+			auth, ok := ctx.Value(AuthContextKey).(*Auth)
+
+			if !ok {
+				return nil, NewServiceError(http.StatusInternalServerError, "Failed to retrieve user roles", nil)
+			}
+
+			if !auth.HasRole(role) {
+				return nil, NewServiceError(http.StatusForbidden, "You don't have required permissions", nil)
+			}
+
+			return next(ctx, request)
+		}
+	}
+}
+
 func (s *Service) getRolesMap() HavingRoles {
 	if s.rolesMap == nil {
 		s.rolesMap = DefaultRolesMap()

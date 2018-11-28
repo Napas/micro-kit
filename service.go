@@ -23,7 +23,6 @@ const AuthContextKey = "AuthContext"
 type Service struct {
 	logsFormatter   logrus.Formatter
 	logger          logrus.FieldLogger
-	awsSession      *session.Session
 	validateKey     *rsa.PublicKey
 	jwtMiddleware   endpoint.Middleware
 	authMiddleware  endpoint.Middleware
@@ -64,27 +63,24 @@ func (s *Service) getLogLevel() logrus.Level {
 }
 
 func (s *Service) GetAwsSession() (*session.Session, error) {
-	if s.awsSession == nil {
-		config := &aws.Config{
-			Region: aws.String(
-				os.Getenv("AWS_REGION"),
-			),
-		}
-
-		if s.getLogLevel() == logrus.DebugLevel {
-			config.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
-			config.CredentialsChainVerboseErrors = aws.Bool(true)
-		}
-
-		awsSession, err := session.NewSession(config)
-
-		if err != nil {
-			return nil, err
-		}
-
-		s.awsSession = awsSession
+	config := &aws.Config{
+		Region: aws.String(
+			os.Getenv("AWS_REGION"),
+		),
 	}
-	return s.awsSession, nil
+
+	if s.getLogLevel() == logrus.DebugLevel {
+		config.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
+		config.CredentialsChainVerboseErrors = aws.Bool(true)
+	}
+
+	awsSession, err := session.NewSession(config)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return awsSession, nil
 }
 
 func (s *Service) GetValidateKey() (*rsa.PublicKey, error) {
@@ -96,6 +92,10 @@ func (s *Service) GetValidateKey() (*rsa.PublicKey, error) {
 		if err != nil {
 			s.logger.WithError(err).Errorf("Failed to download public key with error: ")
 			return nil, err
+		}
+
+		if os.Getenv("S3_ENDPOINT") != "" {
+			sess.Config.Endpoint = aws.String(os.Getenv("S3_ENDPOINT"))
 		}
 
 		downloader := s3manager.NewDownloader(sess)
